@@ -26,6 +26,10 @@ public class UserService {
         return repository.findByEmail(email);
     }
 
+    public Optional<User> findById(String id) {
+        return repository.findById(id);
+    }
+
     public User update(User user) {
         return repository.save(user);
     }

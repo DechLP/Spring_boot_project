@@ -8,7 +8,12 @@ import com.project.traning.backend.mapper.UserMapper;
 import com.project.traning.backend.model.MLoginRequest;
 import com.project.traning.backend.model.MRegisterRequest;
 import com.project.traning.backend.model.MRegisterResponse;
+import com.project.traning.backend.service.TokenService;
 import com.project.traning.backend.service.UserService;
+import com.project.traning.backend.util.SecurityUtil;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,11 +27,30 @@ public class UserBusiness {
 
     private final UserService userService;
 
+    private final TokenService tokenService;
+
     private final UserMapper userMapper;
 
-    public UserBusiness(UserService userService, UserMapper userMapper) {
+    public UserBusiness(UserService userService, TokenService tokenService, UserMapper userMapper) {
         this.userService = userService;
+        this.tokenService = tokenService;
         this.userMapper = userMapper;
+    }
+
+    public String refreshToken() throws BaseException {
+        Optional<String> opt = SecurityUtil.getCurrentUserId();
+        if (opt.isEmpty()) {
+            throw UserException.unAuthorized();
+        }
+        String userId = opt.get();
+
+        Optional<User> optUser = userService.findById(userId);
+        if (optUser.isEmpty()) {
+            throw UserException.notFound();
+        }
+
+        User user = optUser.get();
+        return tokenService.tokenize(user);
     }
 
     public MRegisterResponse register(MRegisterRequest request) throws BaseException {
@@ -51,9 +75,7 @@ public class UserBusiness {
             throw UserException.loginFailPasswordIncorrect();
         }
 
-        // TODO: generate JWT
-        String token = "JWT TO DO";
-        return token;
+        return tokenService.tokenize(user);
     }
 
     public String uploadProfilePicture(MultipartFile file) throws BaseException {
