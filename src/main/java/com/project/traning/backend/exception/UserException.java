@@ -40,6 +40,12 @@ public class UserException extends BaseException {
         return new UserException("create.name.null");
     }
 
+    // UPDATE
+
+    public static UserException updateNameNull() {
+        return new UserException("update.name.null");
+    }
+
     // LOGIN
 
     public static UserException loginFailEmailNotFound() {
@@ -49,5 +55,39 @@ public class UserException extends BaseException {
     public static UserException loginFailPasswordIncorrect() {
         return new UserException("login.fail");
     }
+
+    public static UserException loginFailUserUnactivated() {
+        return new UserException("login.fail.unactivated");
+    }
+
+    // ACTIVATE
+
+    public static UserException activateNoToken() {
+        return new UserException("activate.no.token");
+    }
+
+    public static UserException activateFail() {
+        return new UserException("activate.fail");
+    }
+
+    public static UserException activateTokenExpire() {
+        return new UserException("activate.token.expire");
+    }
+
+    // RESEND ACTIVATION EMAIL
+
+    public static UserException resendActivationEmailNoToken() {
+        return new UserException("resend.activation.no.token");
+    }
+
+    public static UserException activateAlready() {
+        return new UserException("activate.already");
+    }
+
+    public static UserException resendActivationTokenNotFound() {
+        return new UserException("resend.activation.fail");
+    }
+
+
 
 }
